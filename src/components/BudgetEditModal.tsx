@@ -20,9 +20,11 @@ const BudgetEditModal = ({ campaign, onClose, onSave, onError }: BudgetEditModal
 
   const handleSave = async () => {
     const budgetValue = parseFloat(budget);
-    
+
     if (isNaN(budgetValue) || budgetValue <= 0) {
-      setError('Please enter a valid budget amount');
+      const msg = 'Please enter a valid budget amount';
+      setError(msg);
+      onError?.(msg);
       return;
     }
 
@@ -33,18 +35,21 @@ const BudgetEditModal = ({ campaign, onClose, onSave, onError }: BudgetEditModal
       if (isDaily) {
         await updateCampaignBudget(campaign.id, budgetValue);
       } else {
-        // For lifetime budget, we need to use a different API endpoint
-        // For now, we'll show an error as lifetime budget updates require different handling
-        setError('Lifetime budget updates are not supported in this version. Please use daily budget.');
+        const msg =
+          'Lifetime budget updates are not supported in this version. Please use daily budget.';
+        setError(msg);
+        onError?.(msg);
         setLoading(false);
         return;
       }
-      
+
       onSave();
       onClose();
       // Success notification will be shown by parent component
     } catch (err: any) {
-      setError(err.message || 'Failed to update budget');
+      const msg = err?.message || 'Failed to update budget';
+      setError(msg);
+      onError?.(msg);
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, LogOut } from 'lucide-react';
 import { Campaign, AdAccount, DatePreset } from '../types';
 import { getAdAccounts, getCampaigns } from '../services/facebookApi';
 import { format } from 'date-fns';
@@ -9,7 +9,11 @@ import AdPreviewModal from './AdPreviewModal';
 import BudgetEditModal from './BudgetEditModal';
 import { useNotification } from '../hooks/useNotification';
 
-const Dashboard = () => {
+interface DashboardProps {
+  onLogout?: () => void;
+}
+
+const Dashboard = ({ onLogout }: DashboardProps) => {
   const [adAccounts, setAdAccounts] = useState<AdAccount[]>([]);
   const [selectedAccountId, setSelectedAccountId] = useState<string>('');
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -100,6 +104,23 @@ const Dashboard = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
+              {/* User Email Display */}
+              <span className="text-sm text-gray-600">
+                {localStorage.getItem('userEmail') || 'User'}
+              </span>
+              
+              {/* Logout Button */}
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                  title="Logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              )}
+              
               {/* Ad Account Selector */}
               {adAccounts.length > 0 && (
                 <select
